@@ -48,7 +48,7 @@ sudo systemctl restart odoo
    - Ve a **Aplicaciones** (modo desarrollador activado)
    - Clic en **Actualizar lista de aplicaciones**
 
-4. Busca e instala el módulo "Inventario de Laboratorio"
+4. Busca e instala el módulo "Inventario"
 
 ## ⚙️ Configuración
 
@@ -72,6 +72,226 @@ Laboratorio Principal
 │   └── Armario B
 └── Área de Equipos
 ```
+
+### Configuración de Campos Personalizados
+
+### Campos para Reactivos Químicos
+
+Ve a **Ajustes > Técnico > Estructura de la Base de Datos > Modelos** y busca `product.template`. Añade estos campos personalizados (con prefijo `x_`):
+
+| Campo | Nombre técnico | Tipo | Descripción |
+|-------|---------------|------|-------------|
+| Fórmula química | `x_formula_quimica` | Char (Texto) | Fórmula molecular del reactivo |
+| CAS | `x_CAS` | Char (Texto) | Número de registro CAS |
+| Pureza | `x_pureza` | Char o Selection | Nivel de pureza (99%, 95%, etc.) |
+| Estado de agregación | `x_estado_de_agregacion` | Selection | Sólido/Líquido/Gaseoso |
+| Densidad | `x_densidad` | Float (Decimal) | Densidad en g/cm³ |
+| Punto de fusión | `x_punto_de_fusion` | Float (Decimal) | Temperatura en °C |
+| Punto de ebullición | `x_punto_de_ebullicion` | Float (Decimal) | Temperatura en °C |
+| Pictogramas de peligrosidad | `x_pictograma_de_peligrosidad` | Char o Many2many | Símbolos de seguridad |
+| Fecha de caducidad | `x_fecha_de_caducidad` | Date (Fecha) | Fecha de vencimiento |
+| Fecha de apertura | `x_fecha_de_apertura` | Date (Fecha) | Fecha de primer uso |
+
+### Campos para Equipos de Laboratorio
+
+En el mismo modelo `product.template`, añade:
+
+| Campo | Nombre técnico | Tipo | Descripción |
+|-------|---------------|------|-------------|
+| Código del equipo | `x_codigo_equipo` | Char (Texto) | Identificador único |
+| Función | `x_funcion` | Text (Texto largo) | Descripción del uso del equipo |
+| Próximo mantenimiento | `x_proximo_mantenimiento` | Date (Fecha) | Fecha programada de mantenimiento |
+| Observaciones | `x_observaciones` | Text (Texto largo) | Notas generales |
+
+### Modelo de Historial de Uso
+
+Crea un nuevo modelo `x_lab_equipment_usage` con estos campos:
+
+| Campo | Nombre técnico | Tipo | Modelo relacionado |
+|-------|---------------|------|-------------------|
+| Equipo | `x_product_id` | Many2one | `product.template` |
+| Usuario | `x_usuario_id` | Many2one | `res.users` |
+| Fecha de uso | `x_fecha_uso` | Date | - |
+| Hora | `x_hora_uso` | Char | - |
+| Observaciones | `x_observaciones` | Text | - |
+
+## 🤖 Configurar campos calculados automáticos (Historial de Uso)
+
+Para que los campos de usuario, fecha y hora se completen automáticamente al crear un registro de uso, configura campos calculados:
+
+### Configuración en el modelo `x_lab_equipment_usage`
+
+Ve a **Ajustes > Técnico > Estructura de la Base de Datos > Modelos** y abre el modelo `x_lab_equipment_usage`.
+
+#### Campo: Usuario automático (`x_usuario_id`)
+
+1. Edita el campo `x_usuario_id`
+2. En la sección **"Propiedades avanzadas"**:
+   - **Dependencias**: `x_product_id`
+   - **Calcular**:
+```python
+   for record in self:
+       if not record.x_usuario_id:
+           record['x_usuario_id'] = self.env.user.id
+```
+3. Marca **"Almacenado"**: ✅
+4. Guarda
+
+#### Campo: Fecha automática (`x_fecha_uso`)
+
+1. Edita el campo `x_fecha_uso`
+2. En la sección **"Propiedades avanzadas"**:
+   - **Dependencias**: `x_product_id`
+   - **Calcular**:
+```python
+   for record in self:
+       if not record.x_fecha_uso:
+           record['x_fecha_uso'] = datetime.date.today()
+```
+3. Marca **"Almacenado"**: ✅
+4. Guarda
+
+#### Campo: Hora automática (`x_hora_uso`)
+
+1. Edita el campo `x_hora_uso`
+2. En la sección **"Propiedades avanzadas"**:
+   - **Dependencias**: `x_product_id`
+   - **Calcular**:
+```python
+   for record in self:
+       if not record.x_hora_uso:
+           record['x_hora_uso'] = datetime.datetime.now().strftime('%H:%M')
+```
+3. Marca **"Almacenado"**: ✅
+4. Guarda
+
+### ✅ Resultado
+
+Ahora cuando un usuario cree un nuevo registro de uso:
+- El campo **Usuario** se completará automáticamente con el usuario actual
+- El campo **Fecha** se completará con la fecha actual
+- El campo **Hora** se completará con la hora actual (formato 24h)
+
+> **Nota**: Los campos aparecen como de solo lectura en la vista (con `readonly="1"`), pero los administradores pueden editarlos si es necesario accediendo directamente al registro.
+
+Luego añade en `product.template`:
+
+| Campo | Nombre técnico | Tipo | Configuración |
+|-------|---------------|------|---------------|
+| Historial de uso | `x_equipment_usage_ids` | One2many | Modelo: `x_lab_equipment_usage`<br>Campo: `x_product_id` |
+
+### Campos Nativos de Odoo (ya disponibles)
+
+No es necesario crear estos campos, ya están incluidos en Odoo:
+
+- **Nombre**: Campo nativo del producto
+- **Cantidad**: Gestionado automáticamente por Odoo
+- **Proveedor/Marca**: Usa la pestaña "Compra" del producto
+- **Localización**: Usa las ubicaciones de almacén jerárquicas
+
+## 📝 Editar vistas directamente (sin Studio)
+
+Puedes personalizar las vistas editándolas manualmente. Es un poco más técnico pero no es difícil:
+
+### Método: Heredar la vista del formulario de producto
+
+#### Paso 1: Inspecciona la vista del producto (opcional)
+
+1. Ve a **Inventario > Productos**
+2. Abre cualquier producto
+3. Con el modo desarrollador activo, verás un **icono de bug 🐛** en la parte superior
+4. Clic en él y selecciona **"Editar vista: Formulario"**
+5. Verás el XML de la vista actual (solo para referencia)
+6. ⚠️ **NO edites directamente esta vista** (es la original del sistema)
+
+#### Paso 2: Crea una vista heredada
+
+1. Ve a **Ajustes > Técnico > Interfaz de Usuario > Vistas**
+2. Clic en **"Crear"**
+3. Completa los campos:
+   - **Nombre de la vista**: `product.template.form.lab.custom`
+   - **Modelo**: `product.template`
+   - **Vista heredada**: Busca y selecciona `product.template.product.form`
+   - **Modo**: `Extension` (Extensión)
+
+#### Paso 3: Añade el código XML en Arquitectura
+
+> ⚠️ **Importante**: Verifica los IDs de tus categorías antes de pegar el código. Para obtenerlos, abre cada categoría y mira la URL:
+> - `http://127.0.0.1:8069/web#id=9&...` → El ID es **9**
+> - Reactivos Químicos: ID **9**
+> - Equipos de Laboratorio: ID **10**
+
+Pega este código en el campo **"Arquitectura"**:
+
+\`\`\`xml
+<xpath expr="//notebook" position="inside">
+    <!-- Pestaña para REACTIVOS QUÍMICOS -->
+    <page string="Información Reactiva" attrs="{'invisible': [('categ_id', 'in', [10])]}">
+        <group>
+            <group string="Identificación">
+                <field name="x_formula_quimica"/>
+                <field name="x_CAS"/>
+                <field name="x_pureza"/>
+                <field name="x_pictograma_de_peligrosidad"/>
+            </group>
+            <group string="Propiedades Físicas">
+                <field name="x_estado_de_agregacion"/>
+                <field name="x_densidad"/>
+                <field name="x_punto_de_fusion"/>
+                <field name="x_punto_de_ebullicion"/>
+            </group>
+            <group string="Fechas">
+                <field name="x_fecha_de_caducidad"/>
+                <field name="x_fecha_de_apertura"/>
+            </group>
+        </group>
+    </page>
+    
+    <!-- Pestaña para EQUIPOS DE LABORATORIO -->
+    <page string="Información Equipo" attrs="{'invisible': [('categ_id', 'in', [9])]}">
+        <group>
+            <group string="Identificación del Equipo">
+                <field name="x_codigo_equipo"/>
+                <field name="x_funcion"/>
+            </group>
+            <group string="Mantenimiento">
+                <field name="x_proximo_mantenimiento"/>
+                <field name="x_observaciones"/>
+            </group>
+        </group>
+        
+        <!-- Historial de Uso del Equipo -->
+        <separator string="Historial de Uso del Equipo"/>
+        <field name="x_equipment_usage_ids" nolabel="1" colspan="2">
+            <tree string="Registros de Uso" editable="top">
+                <field name="x_fecha_uso" string="Fecha" readonly="1" force_save="1"/>
+                <field name="x_hora_uso" string="Hora" readonly="1" force_save="1"/>
+                <field name="x_usuario_id" string="Usuario" readonly="1" force_save="1"/>
+                <field name="x_observaciones" string="Observaciones"/>
+            </tree>
+        </field>
+    </page>
+</xpath>
+\`\`\`
+
+#### Paso 4: Guarda y verifica
+
+1. Clic en **"Guardar"**
+2. Recarga la página (Ctrl + Shift + R)
+3. Abre un producto y verifica:
+   - Si es de categoría "Reactivos Químicos" → aparece pestaña "Información Reactiva"
+   - Si es de categoría "Equipos de Laboratorio" → aparece pestaña "Información Equipo"
+
+### 🔧 Ajustar IDs de categorías
+
+Si tus categorías tienen IDs diferentes (no son 9 y 10), modifica estas líneas en el XML:
+
+- `attrs="{'invisible': [('categ_id', 'in', [10])]}"` → Cambia **10** por el ID de "Equipos de Laboratorio"
+- `attrs="{'invisible': [('categ_id', 'in', [9])]}"` → Cambia **9** por el ID de "Reactivos Químicos"
+
+### ✅ Resultado
+
+Las pestañas personalizadas aparecerán automáticamente según la categoría asignada al producto, mostrando solo los campos relevantes para cada tipo.
 
 ### Configurar permisos de usuarios
 
@@ -120,23 +340,13 @@ lab_inventory/
 └── README.md
 ```
 
-## 🤝 Contribuciones
-
-Las contribuciones son bienvenidas. Por favor:
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
 ## 📝 Licencia
 
 Este proyecto está bajo la Licencia LGPL-3.0 - ver el archivo LICENSE para más detalles.
 
 ## 👨‍💻 Autor
 
-[Tu Nombre] - [Tu Email/GitHub]
+[Fran Montesinos] - [Monti1751](https://github.com/Monti1751)
 
 ## 🙏 Agradecimientos
 
