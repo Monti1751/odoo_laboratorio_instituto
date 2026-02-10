@@ -91,6 +91,7 @@ Ve a **Ajustes > Técnico > Estructura de la Base de Datos > Modelos** y busca `
 | Pictogramas de peligrosidad | `x_pictograma_de_peligrosidad` | Char o Many2many | Símbolos de seguridad |
 | Fecha de caducidad | `x_fecha_de_caducidad` | Date (Fecha) | Fecha de vencimiento |
 | Fecha de apertura | `x_fecha_de_apertura` | Date (Fecha) | Fecha de primer uso |
+|Advertencia de Seguridad| `x_advertencia_seguridad`|Char (Texto)|Advertencias de uso para el reactivo|
 
 ### Campos para Equipos de Laboratorio
 
@@ -226,7 +227,21 @@ Pega este código en el campo **"Arquitectura"**:
 \`\`\`xml
 <xpath expr="//notebook" position="inside">
     <!-- Pestaña para REACTIVOS QUÍMICOS -->
-    <page string="Información Reactiva" attrs="{'invisible': [('categ_id', 'in', [10])]}">
+    <page string="Información Reactiva" attrs="{'invisible': [('categ_id', 'in', [9])]}">
+        
+        <!-- Banner de advertencia solo para reactivos -->
+        <div class="alert alert-danger" role="alert" style="margin: 10px 0 20px 0; padding: 20px; border-left: 5px solid #721c24;" attrs="{'invisible': [('x_advertencia_seguridad', '=', False)]}">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fa fa-exclamation-triangle fa-3x" style="color: #721c24;"/>
+                <div style="flex: 1;">
+                    <h3 style="margin: 0 0 10px 0; color: #721c24;">
+                        ⚠️ ADVERTENCIA DE SEGURIDAD
+                    </h3>
+                    <field name="x_advertencia_seguridad" nolabel="1" readonly="1"/>
+                </div>
+            </div>
+        </div>
+        
         <group>
             <group string="Identificación">
                 <field name="x_formula_quimica"/>
@@ -244,11 +259,14 @@ Pega este código en el campo **"Arquitectura"**:
                 <field name="x_fecha_de_caducidad"/>
                 <field name="x_fecha_de_apertura"/>
             </group>
+            <group string="Seguridad">
+                <field name="x_advertencia_seguridad" placeholder="Ingrese advertencias de seguridad para este reactivo..."/>
+            </group>
         </group>
     </page>
     
     <!-- Pestaña para EQUIPOS DE LABORATORIO -->
-    <page string="Información Equipo" attrs="{'invisible': [('categ_id', 'in', [9])]}">
+    <page string="Información Equipo" attrs="{'invisible': [('categ_id', 'in', [10])]}">
         <group>
             <group string="Identificación del Equipo">
                 <field name="x_codigo_equipo"/>
@@ -260,7 +278,6 @@ Pega este código en el campo **"Arquitectura"**:
             </group>
         </group>
         
-        <!-- Historial de Uso del Equipo -->
         <separator string="Historial de Uso del Equipo"/>
         <field name="x_equipment_usage_ids" nolabel="1" colspan="2">
             <tree string="Registros de Uso" editable="top">
