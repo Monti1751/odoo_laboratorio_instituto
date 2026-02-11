@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_consumo_reactivo_form" model="ir.ui.view">
+        <field name="name">lab.consumo.reactivo.form</field>
+        <field name="model">lab.consumo.reactivo</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_consumir" string="Consumir" type="object" class="oe_highlight" 
+                            attrs="{'invisible': [('state', '=', 'done')]}"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="producto_id"/>
+                            <field name="cantidad_usada"/>
+                        </group>
+                        <group>
+                            <field name="alumno_id"/>
+                            <field name="fecha"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_consumo_reactivo_tree" model="ir.ui.view">
+        <field name="name">lab.consumo.reactivo.tree</field>
+        <field name="model">lab.consumo.reactivo</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="fecha"/>
+                <field name="producto_id"/>
+                <field name="cantidad_usada"/>
+                <field name="alumno_id"/>
+                <field name="state" widget="badge" decoration-success="state == 'done'" decoration-info="state == 'draft'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_consumo_reactivo" model="ir.actions.act_window">
+        <field name="name">Consumo de Reactivos</field>
+        <field name="res_model">lab.consumo.reactivo</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_lab_root" name="Laboratorio" sequence="10"/>
+    <menuitem id="menu_consumo_reactivo" name="Consumo" parent="menu_lab_root" action="action_consumo_reactivo"/>
+</odoo>
