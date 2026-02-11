@@ -224,7 +224,7 @@ Puedes personalizar las vistas editándolas manualmente. Es un poco más técnic
 
 Pega este código en el campo **"Arquitectura"**:
 
-\`\`\`xml
+``` xml
 <xpath expr="//notebook" position="inside">
     <!-- Pestaña para REACTIVOS QUÍMICOS -->
     <page string="Información Reactiva" attrs="{'invisible': [('categ_id', 'in', [9])]}">
@@ -289,7 +289,7 @@ Pega este código en el campo **"Arquitectura"**:
         </field>
     </page>
 </xpath>
-\`\`\`
+```
 
 #### Paso 4: Guarda y verifica
 
@@ -364,6 +364,12 @@ Este proyecto está bajo la Licencia LGPL-3.0 - ver el archivo LICENSE para más
 ## 👨‍💻 Autor
 
 [Fran Montesinos] - [Monti1751](https://github.com/Monti1751)
+
+[Ashley Barrionuevo] - [Ashley2411](https://github.com/Ashley2411))
+
+[Miguel Duque] - [Mig56](https://github.com/Mig56)
+
+[David Cruces] - [davcruman](https://github.com/davcruman)
 
 ## 🙏 Agradecimientos
 
