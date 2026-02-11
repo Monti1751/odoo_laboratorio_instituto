@@ -365,7 +365,7 @@ Este proyecto está bajo la Licencia LGPL-3.0 - ver el archivo LICENSE para más
 
 [Fran Montesinos] - [Monti1751](https://github.com/Monti1751)
 
-[Ashley Barrionuevo] - [Ashley2411](https://github.com/Ashley2411))
+[Ashley Barrionuevo] - [Ashley2411](https://github.com/Ashley2411)
 
 [Miguel Duque] - [Mig56](https://github.com/Mig56)
 
