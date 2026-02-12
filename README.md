@@ -316,6 +316,45 @@ Las pestañas personalizadas aparecerán automáticamente según la categoría a
 2. Asigna usuarios estudiantes a este grupo
 3. Los administradores mantienen el grupo "Administración / Ajustes"
 
+## 🚀 Instalación del Módulo `lab_consumo`
+
+Para instalar este módulo en una instancia de Odoo (Local o Servidor), sigue estos pasos:
+
+### 1. Descargar el código
+Accede a la terminal de tu servidor Odoo y navega hasta tu carpeta de `custom_addons`. Luego, clona el repositorio:
+
+```bash
+cd /opt/odoo/custom_addons
+git clone [https://github.com/Monti1751/odoo_laboratorio_instituto.git](https://github.com/Monti1751/odoo_laboratorio_instituto.git) lab_consumo
+```
+### 2. Configurar permisos
+Asegúrate de que Odoo tenga permisos para leer la nueva carpeta:
+```
+sudo chown -R odoo:odoo lab_consumo
+```
+### 3. Reiniciar el servicio
+Para que Odoo detecte los nuevos archivos Python, debes reiniciar el servidor:
+```
+sudo systemctl restart odoo
+```
+### 4. Activar el módulo en la interfaz de Odoo
+
+1. Entra en Odoo con tu usuario administrador.
+
+2. Activa el Modo Desarrollador (Ajustes > Activar modo desarrollador).
+
+3. Ve al menú Aplicaciones.
+
+4. En la barra superior, haz clic en Actualizar lista de aplicaciones y confirma en el botón "Actualizar".
+
+5. Quita el filtro de "Aplicaciones" de la barra de búsqueda, busca lab_consumo e instálalo.
+
+### 🛠️ Requisitos previos
+Para que el módulo funcione correctamente, asegúrate de tener instalados los siguientes módulos oficiales:
+
+- Inventario (stock): Necesario para gestionar los movimientos de los reactivos.
+- Contactos (base): Para asociar alumnos a los consumos.
+   
 ## 📖 Uso
 
 ### Gestionar Reactivos
