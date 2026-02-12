@@ -235,7 +235,7 @@ Pega este código en el campo **"Arquitectura"**:
                 <i class="fa fa-exclamation-triangle fa-3x" style="color: #721c24;"/>
                 <div style="flex: 1;">
                     <h3 style="margin: 0 0 10px 0; color: #721c24;">
-                        ⚠️ ADVERTENCIA DE SEGURIDAD
+                        ADVERTENCIA DE SEGURIDAD
                     </h3>
                     <field name="x_advertencia_seguridad" nolabel="1" readonly="1"/>
                 </div>
