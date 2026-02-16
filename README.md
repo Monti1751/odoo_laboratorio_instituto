@@ -131,9 +131,9 @@ Ve a **Ajustes > Técnico > Estructura de la Base de Datos > Modelos** y abre el
    - **Dependencias**: `x_product_id`
    - **Calcular**:
 ```python
-   for record in self:
-       if not record.x_usuario_id:
-           record['x_usuario_id'] = self.env.user.id
+for record in self:
+    if not record.x_usuario_id:
+        record['x_usuario_id'] = self.env.user.id
 ```
 3. Marca **"Almacenado"**: ✅
 4. Guarda
@@ -145,9 +145,9 @@ Ve a **Ajustes > Técnico > Estructura de la Base de Datos > Modelos** y abre el
    - **Dependencias**: `x_product_id`
    - **Calcular**:
 ```python
-   for record in self:
-       if not record.x_fecha_uso:
-           record['x_fecha_uso'] = datetime.date.today()
+for record in self:
+    if not record.x_fecha_uso:
+        record['x_fecha_uso'] = datetime.date.today()
 ```
 3. Marca **"Almacenado"**: ✅
 4. Guarda
@@ -159,9 +159,9 @@ Ve a **Ajustes > Técnico > Estructura de la Base de Datos > Modelos** y abre el
    - **Dependencias**: `x_product_id`
    - **Calcular**:
 ```python
-   for record in self:
-       if not record.x_hora_uso:
-           record['x_hora_uso'] = datetime.datetime.now().strftime('%H:%M')
+for record in self:
+    if not record.x_hora_uso:
+        record['x_hora_uso'] = datetime.datetime.now().strftime('%H:%M')
 ```
 3. Marca **"Almacenado"**: ✅
 4. Guarda
