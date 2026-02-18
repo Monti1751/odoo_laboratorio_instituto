@@ -322,7 +322,7 @@ Para instalar este módulo en una instancia de Odoo (Local o Servidor), sigue es
 
 ### 1. Descargar el código
 Accede a la terminal de tu servidor Odoo y navega hasta tu carpeta de `custom_addons`. Luego, clona el repositorio:
-
+https://github.com/El-Mig
 ```bash
 cd /opt/odoo/custom_addons
 git clone [https://github.com/Monti1751/odoo_laboratorio_instituto.git](https://github.com/Monti1751/odoo_laboratorio_instituto.git) lab_consumo
@@ -406,7 +406,7 @@ Este proyecto está bajo la Licencia LGPL-3.0 - ver el archivo LICENSE para más
 
 [Ashley Barrionuevo] - [Ashley2411](https://github.com/Ashley2411)
 
-[Miguel Duque] - [Mig56](https://github.com/Mig56)
+[Miguel Duque] - [El-Mig](https://github.com/El-Mig)
 
 [David Cruces] - [davcruman](https://github.com/davcruman)
 
