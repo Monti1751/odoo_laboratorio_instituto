@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Categoría: Reactivos Químicos -->
+        <record id="categ_reactivos" model="product.category">
+            <field name="name">Reactivos Químicos</field>
+            <field name="parent_id" ref="product.product_category_all" />
+        </record>
+
+        <!-- Categoría: Equipos de Laboratorio -->
+        <record id="categ_equipos" model="product.category">
+            <field name="name">Equipos de Laboratorio</field>
+            <field name="parent_id" ref="product.product_category_all" />
+        </record>
+
+    </data>
+</odoo>

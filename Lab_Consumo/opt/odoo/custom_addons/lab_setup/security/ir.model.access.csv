@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_lab_equipment_usage_user,access.lab.equipment.usage.user,model_lab_equipment_usage,,1,1,1,0
+access_lab_equipment_usage_manager,access.lab.equipment.usage.manager,model_lab_equipment_usage,base.group_system,1,1,1,1

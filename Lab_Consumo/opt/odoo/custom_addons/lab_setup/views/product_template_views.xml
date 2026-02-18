@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Vista heredada del formulario de producto
+         Añade dos pestañas condicionales según la categoría del producto:
+           - "Información Reactiva"  → visible si is_reactivo = True
+           - "Información Equipo"    → visible si is_equipo = True
+         Los campos is_reactivo / is_equipo son booleanos computados en
+         product_template.py que comparan categ_id con las categorías
+         creadas por este módulo (lab_setup.categ_reactivos / categ_equipos).
+         ═══════════════════════════════════════════════════════════════════ -->
+    <record id="view_product_template_form_lab" model="ir.ui.view">
+        <field name="name">product.template.form.lab.setup</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view" />
+        <field name="arch" type="xml">
+
+            <xpath expr="//notebook" position="inside">
+
+                <!-- ── Pestaña: Reactivos Químicos ─────────────────────── -->
+                <page string="Información Reactiva" invisible="not is_reactivo">
+
+                    <!-- Banner de advertencia de seguridad -->
+                    <div class="alert alert-danger"
+                        role="alert"
+                        style="margin: 10px 0 20px 0; padding: 20px; border-left: 5px solid #721c24;"
+                        invisible="not x_advertencia_seguridad">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <i class="fa fa-exclamation-triangle fa-3x" style="color: #721c24;" />
+                            <div style="flex: 1;">
+                                <h3 style="margin: 0 0 10px 0; color: #721c24;">
+                                    ADVERTENCIA DE SEGURIDAD
+                                </h3>
+                                <field name="x_advertencia_seguridad" nolabel="1" readonly="1" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <group>
+                        <group string="Identificación">
+                            <field name="x_formula_quimica" />
+                            <field name="x_CAS" />
+                            <field name="x_pureza" />
+                            <field name="x_pictograma_de_peligrosidad" />
+                        </group>
+                        <group string="Propiedades Físicas">
+                            <field name="x_estado_de_agregacion" />
+                            <field name="x_densidad" />
+                            <field name="x_punto_de_fusion" />
+                            <field name="x_punto_de_ebullicion" />
+                        </group>
+                        <group string="Fechas">
+                            <field name="x_fecha_de_caducidad" />
+                            <field name="x_fecha_de_apertura" />
+                        </group>
+                        <group string="Seguridad">
+                            <field name="x_advertencia_seguridad"
+                                placeholder="Ingrese advertencias de seguridad para este reactivo..."
+                                colspan="2" />
+                        </group>
+                    </group>
+                </page>
+
+                <!-- ── Pestaña: Equipos de Laboratorio ─────────────────── -->
+                <page string="Información Equipo" invisible="not is_equipo">
+                    <group>
+                        <group string="Identificación del Equipo">
+                            <field name="x_codigo_equipo" />
+                            <field name="x_funcion" />
+                        </group>
+                        <group string="Mantenimiento">
+                            <field name="x_proximo_mantenimiento" />
+                            <field name="x_observaciones" />
+                        </group>
+                    </group>
+
+                    <separator string="Historial de Uso del Equipo" />
+                    <field name="equipment_usage_ids" nolabel="1" colspan="2">
+                        <list string="Registros de Uso" editable="top">
+                            <field name="fecha_uso" string="Fecha" readonly="1" force_save="1" />
+                            <field name="hora_uso" string="Hora" readonly="1" force_save="1" />
+                            <field name="usuario_id" string="Usuario" readonly="1" force_save="1" />
+                            <field name="observaciones" string="Observaciones" />
+                        </list>
+                    </field>
+                </page>
+
+            </xpath>
+
+            <!-- Campos ocultos necesarios para evaluar invisible= en el cliente -->
+            <xpath expr="//sheet" position="inside">
+                <field name="is_reactivo" invisible="1" />
+                <field name="is_equipo" invisible="1" />
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

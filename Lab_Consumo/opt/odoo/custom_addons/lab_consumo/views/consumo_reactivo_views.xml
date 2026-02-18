@@ -6,8 +6,8 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="action_consumir" string="Consumir" type="object" class="oe_highlight" 
-                            attrs="{'invisible': [('state', '=', 'done')]}"/>
+                    <button name="action_consumir" string="Consumir" type="object" class="oe_highlight"
+                            invisible="state == 'done'"/>
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
@@ -30,20 +30,20 @@
         <field name="name">lab.consumo.reactivo.tree</field>
         <field name="model">lab.consumo.reactivo</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="fecha"/>
                 <field name="producto_id"/>
                 <field name="cantidad_usada"/>
                 <field name="alumno_id"/>
                 <field name="state" widget="badge" decoration-success="state == 'done'" decoration-info="state == 'draft'"/>
-            </tree>
+            </list>
         </field>
     </record>
 
     <record id="action_consumo_reactivo" model="ir.actions.act_window">
         <field name="name">Consumo de Reactivos</field>
         <field name="res_model">lab.consumo.reactivo</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <menuitem id="menu_lab_root" name="Laboratorio" sequence="10"/>

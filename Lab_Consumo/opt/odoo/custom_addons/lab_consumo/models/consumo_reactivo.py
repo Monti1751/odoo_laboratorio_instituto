@@ -67,7 +67,7 @@ class LabConsumoReactivo(models.Model):
 
             # 3. Registrar la cantidad realizada
             for line in movimiento.move_line_ids:
-                line.qty_done = record.cantidad_usada
+                line.quantity = record.cantidad_usada
 
             # 4. Validar y finalizar
             movimiento._action_done()
